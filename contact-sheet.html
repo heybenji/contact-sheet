@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Contact Sheet</title>
+  </head>
+  <body>
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+      
+      header {
+        padding: 24pt;
+      }
+      
+      h1, p {
+        margin-bottom: 24pt;
+      }
+      
+      span {
+        display: inline-block;
+        width: calc( 72pt * 3.25 );
+        height: calc( 72pt * 3.25 );
+        overflow: hidden;
+        margin: 12pt;
+        vertical-align: top;
+      }
+      
+      span .thumb {
+        width: 100%;
+        height: auto;
+      }
+      
+      output {
+        clear: both;
+        display: block;
+      }
+    
+      @media print {
+        header {
+          display: none;
+        }
+      }
+    </style>
+    
+    <header>
+      <h1>Contact Sheet</h1>
+      <p>Select some images, then print. They're cropped to 3.25 inch squares from the top left. Reload to clear thumbs and do more.</p>
+      <input type="file" id="files" name="files[]" multiple />
+    </header>
+    <output id="list"></output>
+    
+    <!-- See: http://www.html5rocks.com/en/tutorials/file/dndfiles/ -->
+    <script>
+      function handleFileSelect(evt) {
+        var files = evt.target.files; // FileList object
+    
+        // Loop through the FileList and render image files as thumbnails.
+        for (var i = 0, f; f = files[i]; i++) {
+    
+          // Only process image files.
+          if (!f.type.match('image.*')) {
+            continue;
+          }
+    
+          var reader = new FileReader();
+    
+          // Closure to capture the file information.
+          reader.onload = (function(theFile) {
+            return function(e) {
+              // Render thumbnail.
+              var span = document.createElement('span');
+              span.innerHTML = ['<img class="thumb" src="', e.target.result,
+                                '" title="', escape(theFile.name), '"/>'].join('');
+              document.getElementById('list').insertBefore(span, null);
+            };
+          })(f);
+    
+          // Read in the image file as a data URL.
+          reader.readAsDataURL(f);
+        }
+      }
+    
+      document.getElementById('files').addEventListener('change', handleFileSelect, false);
+    </script>
+    
+  </body>
+</html>
+
+
